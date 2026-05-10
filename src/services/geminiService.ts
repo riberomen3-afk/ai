@@ -2,7 +2,18 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { TeamCore } from "../types";
 import { POKEMON_STATS } from "../data/pokemonStats";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+let aiClient: GoogleGenAI | null = null;
+
+function getAiClient() {
+  if (!aiClient) {
+    const key = process.env.GEMINI_API_KEY;
+    if (!key) {
+      throw new Error("GEMINI_API_KEY environment variable is required");
+    }
+    aiClient = new GoogleGenAI({ apiKey: key });
+  }
+  return aiClient;
+}
 
 const POKEMON_STATS_PROMPT = `
 [Pokémon Usage Statistics (Top Abilities, Moves, Items, Natures, EV Spreads)]
@@ -157,7 +168,7 @@ export async function chatWithProfessor(messages: { role: 'user' | 'ai', content
       parts: [{ text: msg.content }]
     }));
 
-    const chat = ai.chats.create({
+    const chat = getAiClient().chats.create({
       model: "gemini-3-flash-preview", // Use flash model for better availability and performance
       config: {
         systemInstruction: SYSTEM_INSTRUCTION + "\n" + POKEMON_STATS_PROMPT,
