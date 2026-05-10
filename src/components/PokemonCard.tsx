@@ -1,14 +1,21 @@
 import React from 'react';
 import { Pokemon } from '../types';
 import { Badge } from './Badge';
-import { Shield, Zap, Sword, Heart, Activity } from 'lucide-react';
+import { Shield, Zap, Sword, Heart, Activity, Percent } from 'lucide-react';
 import { TYPE_NAME_KO } from '../constants';
+import { getStatsForPokemon, extractRate, extractSpreadRate } from '../utils/statsUtils';
 
 interface PokemonCardProps {
   pokemon: Pokemon;
 }
 
 export const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon }) => {
+  const stats = getStatsForPokemon(pokemon.name);
+  const itemRate = extractRate(stats?.items, pokemon.item);
+  const abilityRate = extractRate(stats?.abilities, pokemon.ability);
+  const natureRate = extractRate(stats?.natures, pokemon.nature);
+  const spreadRate = extractSpreadRate(stats?.spreads, pokemon.nature, pokemon.evs);
+
   return (
     <div className="bg-white rounded-lg border border-surface-container-high shadow-sm overflow-hidden hover:shadow-md transition-shadow relative">
       <div className="absolute top-2 right-2 flex gap-1 z-10">
@@ -40,16 +47,28 @@ export const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon }) => {
           </div>
           
           <div className="grid grid-cols-1 gap-1 text-[11px] text-on-surface-variant font-medium">
-            <div><span className="font-black opacity-40 uppercase tracking-tighter mr-1 text-[9px]">도구</span> {pokemon.item}</div>
-            <div><span className="font-black opacity-40 uppercase tracking-tighter mr-1 text-[9px]">특성</span> {pokemon.ability}</div>
-            <div><span className="font-black opacity-40 uppercase tracking-tighter mr-1 text-[9px]">성격</span> {pokemon.nature}</div>
+            <div className="flex items-center justify-between">
+              <div><span className="font-black opacity-40 uppercase tracking-tighter mr-1 text-[9px]">도구</span> {pokemon.item}</div>
+              {itemRate && <div className="text-[9px] font-bold text-primary opacity-80">{itemRate} 채용</div>}
+            </div>
+            <div className="flex items-center justify-between">
+              <div><span className="font-black opacity-40 uppercase tracking-tighter mr-1 text-[9px]">특성</span> {pokemon.ability}</div>
+              {abilityRate && <div className="text-[9px] font-bold text-primary opacity-80">{abilityRate} 채용</div>}
+            </div>
+            <div className="flex items-center justify-between">
+              <div><span className="font-black opacity-40 uppercase tracking-tighter mr-1 text-[9px]">성격</span> {pokemon.nature}</div>
+              {natureRate && <div className="text-[9px] font-bold text-primary opacity-80">{natureRate} 채용</div>}
+            </div>
           </div>
         </div>
       </div>
 
       <div className="px-4 pb-4">
         <div className="mb-4">
-          <div className="text-[10px] font-bold text-on-surface-variant uppercase mb-2">노력치 분배</div>
+          <div className="flex justify-between items-end mb-2">
+            <div className="text-[10px] font-bold text-on-surface-variant uppercase">노력치 분배</div>
+            {spreadRate && <div className="text-[9px] font-bold text-primary opacity-80 border border-primary/20 bg-primary/5 px-1.5 py-0.5 rounded shadow-sm">{spreadRate} 채용 샘플</div>}
+          </div>
           <div className="grid grid-cols-6 gap-1">
             {(['hp', 'atk', 'def', 'spa', 'spd', 'spe'] as const).map((stat) => {
               const val = pokemon.evs[stat] || 0;
@@ -67,12 +86,18 @@ export const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon }) => {
         <div>
           <div className="text-[10px] font-bold text-on-surface-variant uppercase mb-2">기술 배치</div>
           <div className="grid grid-cols-2 gap-2">
-            {pokemon.moves.map(move => (
-              <div key={move} className="flex items-center gap-2 bg-surface-container-low rounded px-2 py-1.5 border border-transparent hover:border-surface-dim transition-colors group">
-                <div className="w-1.5 h-1.5 rounded-full bg-on-surface-variant group-hover:bg-primary" />
-                <span className="text-xs font-semibold">{move}</span>
-              </div>
-            ))}
+            {pokemon.moves.map(move => {
+              const moveRate = extractRate(stats?.moves, move);
+              return (
+                <div key={move} className="flex items-center justify-between gap-1 bg-surface-container-low rounded px-2 py-1.5 border border-transparent hover:border-surface-dim transition-colors group">
+                  <div className="flex items-center gap-1.5 overflow-hidden">
+                    <div className="w-1.5 h-1.5 rounded-full bg-on-surface-variant group-hover:bg-primary flex-shrink-0" />
+                    <span className="text-[11px] font-semibold truncate" title={move}>{move}</span>
+                  </div>
+                  {moveRate && <span className="text-[8px] font-bold text-primary opacity-70 flex-shrink-0">{moveRate}</span>}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

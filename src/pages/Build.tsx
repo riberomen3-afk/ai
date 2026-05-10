@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, Copy, Wand2, Plus, BarChart3, Loader2, Save, Zap, RotateCcw } from 'lucide-react';
 import { PokemonCard } from '../components/PokemonCard';
 import { MOCK_TEAMS, TYPE_NAME_KO } from '../constants';
+import { getStatsForPokemon, extractRate, extractSpreadRate } from '../utils/statsUtils';
 import { motion } from 'motion/react';
 import { chatWithProfessor } from '../services/geminiService';
 import Markdown from 'react-markdown';
@@ -842,6 +843,9 @@ export const Build: React.FC<BuildProps> = ({ onSaveTeam, onNavigate }) => {
                                     <div className="text-xs font-bold text-on-surface-variant flex items-center gap-1 opacity-70">
                                       <Zap size={10} className="text-primary" />
                                       {pokemon.nature}
+                                      {extractRate(getStatsForPokemon(pokemon.name)?.natures, pokemon.nature) && (
+                                        <span className="ml-2 text-[9px] font-bold text-primary opacity-80">{extractRate(getStatsForPokemon(pokemon.name)?.natures, pokemon.nature)} 채용</span>
+                                      )}
                                     </div>
                                   </div>
                                 </div>
@@ -853,13 +857,23 @@ export const Build: React.FC<BuildProps> = ({ onSaveTeam, onNavigate }) => {
                                       <div>
                                         <div className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 opacity-50">Base Setup</div>
                                         <div className="p-4 bg-surface-container-low rounded-2xl border border-surface-container space-y-2">
-                                          <div className="flex justify-between text-xs font-bold">
+                                          <div className="flex justify-between items-center text-xs font-bold">
                                             <span className="opacity-50">도구</span>
-                                            <span className="text-primary">{pokemon.item}</span>
+                                            <div className="flex gap-2 items-center">
+                                              {extractRate(getStatsForPokemon(pokemon.name)?.items, pokemon.item) && (
+                                                <span className="text-[9px] font-bold text-primary opacity-80">{extractRate(getStatsForPokemon(pokemon.name)?.items, pokemon.item)} 채용</span>
+                                              )}
+                                              <span className="text-primary">{pokemon.item}</span>
+                                            </div>
                                           </div>
-                                          <div className="flex justify-between text-xs font-bold">
+                                          <div className="flex justify-between items-center text-xs font-bold">
                                             <span className="opacity-50">특성</span>
-                                            <span>{pokemon.ability}</span>
+                                            <div className="flex gap-2 items-center">
+                                              {extractRate(getStatsForPokemon(pokemon.name)?.abilities, pokemon.ability) && (
+                                                <span className="text-[9px] font-bold text-primary opacity-80">{extractRate(getStatsForPokemon(pokemon.name)?.abilities, pokemon.ability)} 채용</span>
+                                              )}
+                                              <span>{pokemon.ability}</span>
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
@@ -867,18 +881,27 @@ export const Build: React.FC<BuildProps> = ({ onSaveTeam, onNavigate }) => {
                                       <div>
                                         <div className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 opacity-50">Moveset</div>
                                         <div className="grid grid-cols-2 gap-2">
-                                          {pokemon.moves.map((move, i) => (
-                                            <div key={i} className="px-3 py-2 bg-white border border-surface-container rounded-xl text-[10px] font-bold text-center shadow-xs">
-                                              {move}
-                                            </div>
-                                          ))}
+                                          {pokemon.moves.map((move, i) => {
+                                            const moveRate = extractRate(getStatsForPokemon(pokemon.name)?.moves, move);
+                                            return (
+                                              <div key={i} className="flex items-center justify-between gap-1 px-3 py-2 bg-white border border-surface-container rounded-xl shadow-xs">
+                                                <span className="text-[10px] font-bold truncate">{move}</span>
+                                                {moveRate && <span className="text-[9px] font-bold text-primary opacity-70 flex-shrink-0">{moveRate}</span>}
+                                              </div>
+                                            );
+                                          })}
                                         </div>
                                       </div>
                                     </div>
 
                                     <div className="space-y-4">
                                       <div>
-                                        <div className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 opacity-50">Effort Values</div>
+                                        <div className="flex justify-between items-end mb-2">
+                                          <div className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest opacity-50">Effort Values</div>
+                                          {extractSpreadRate(getStatsForPokemon(pokemon.name)?.spreads, pokemon.nature, pokemon.evs) && (
+                                            <div className="text-[9px] font-bold text-primary opacity-80 normal-case border border-primary/20 bg-primary/5 px-1.5 py-0.5 rounded shadow-sm">{extractSpreadRate(getStatsForPokemon(pokemon.name)?.spreads, pokemon.nature, pokemon.evs)} 채용 샘플</div>
+                                          )}
+                                        </div>
                                         <div className="p-4 bg-surface-container-high rounded-2xl flex flex-col gap-1.5">
                                           {(['hp', 'atk', 'def', 'spa', 'spd', 'spe'] as const).map((stat) => {
                                             const val = pokemon.evs[stat];
