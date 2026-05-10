@@ -1,0 +1,75 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email"]
+    },
+    "Team": {
+      "title": "Team",
+      "description": "A Pokemon team created by a user",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "format": { "type": "string" },
+        "description": { "type": "string" },
+        "pokemon": {
+          "type": "array",
+          "items": { "$ref": "#/entities/Pokemon" }
+        },
+        "winRate": { "type": "number" },
+        "synergyLevel": { "type": "number" },
+        "ownerId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "pokemon", "ownerId"]
+    },
+    "Pokemon": {
+      "title": "Pokemon",
+      "description": "Information about a specific Pokemon in a team",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "types": { "type": "array", "items": { "type": "string" } },
+        "item": { "type": "string" },
+        "ability": { "type": "string" },
+        "nature": { "type": "string" },
+        "teraType": { "type": "string" },
+        "evs": {
+          "type": "object",
+          "properties": {
+            "hp": { "type": "number" },
+            "atk": { "type": "number" },
+            "def": { "type": "number" },
+            "spa": { "type": "number" },
+            "spd": { "type": "number" },
+            "spe": { "type": "number" }
+          }
+        },
+        "moves": { "type": "array", "items": { "type": "string" } },
+        "imageUrl": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/users/{userId}/teams/{teamId}": {
+      "schema": "Team",
+      "description": "Teams created by the user"
+    }
+  }
+}

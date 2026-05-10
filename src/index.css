@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Montserrat", sans-serif;
+
+  --color-surface: #f8f9ff;
+  --color-surface-dim: #cbdbf5;
+  --color-surface-bright: #f8f9ff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #eff4ff;
+  --color-surface-container: #e5eeff;
+  --color-surface-container-high: #dce9ff;
+  --color-surface-container-highest: #d3e4fe;
+  --color-on-surface: #0b1c30;
+  --color-inverse-surface: #213145;
+  --color-inverse-on-surface: #eaf1ff;
+  --color-primary: #bc0100;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #eb0000;
+  --color-secondary: #0001c0;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #080cff;
+  --color-tertiary: #745b00;
+  --color-on-tertiary: #ffffff;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #410002;
+  --color-background: #f8f9ff;
+  --color-on-background: #0b1c30;
+  
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-on-background font-sans;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight;
+  }
+}
+
+.pokemon-type-fire { @apply bg-[#FF4422] text-white; }
+.pokemon-type-water { @apply bg-[#3399FF] text-white; }
+.pokemon-type-grass { @apply bg-[#77CC55] text-white; }
+.pokemon-type-electric { @apply bg-[#FFCC33] text-black; }
+.pokemon-type-ice { @apply bg-[#66CCFF] text-black; }
+.pokemon-type-fighting { @apply bg-[#BB5544] text-white; }
+.pokemon-type-poison { @apply bg-[#AA5599] text-white; }
+.pokemon-type-ground { @apply bg-[#DDBB55] text-black; }
+.pokemon-type-flying { @apply bg-[#8899FF] text-white; }
+.pokemon-type-psychic { @apply bg-[#FF5599] text-white; }
+.pokemon-type-bug { @apply bg-[#AABB22] text-white; }
+.pokemon-type-rock { @apply bg-[#BBAA66] text-white; }
+.pokemon-type-ghost { @apply bg-[#6666BB] text-white; }
+.pokemon-type-dragon { @apply bg-[#7766EE] text-white; }
+.pokemon-type-dark { @apply bg-[#775544] text-white; }
+.pokemon-type-steel { @apply bg-[#AAAABB] text-black; }
+.pokemon-type-fairy { @apply bg-[#EE99EE] text-black; }
+.pokemon-type-normal { @apply bg-[#AAAA99] text-white; }
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out forwards;
+}
